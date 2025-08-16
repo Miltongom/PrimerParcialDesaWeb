@@ -9,7 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 
-  <!-- Tus estilos separados -->
+  <!-- Estilos propios -->
   <link href="styles.css" rel="stylesheet" />
 </head>
 <body>
@@ -17,20 +17,20 @@
   <header class="navbar navbar-dark app-navbar">
     <div class="container">
       <span class="navbar-brand fw-bold">Censo 2018 — El Progreso</span>
-      <span class="navbar-text text-white-50 small">HTML5 + Bootstrap + JS (fetch)</span>
+      <span class="navbar-text text-white-50 small"></span>
     </div>
   </header>
 
-  <!-- HERO -->
+  <!-- HERO (controles + KPIs) -->
   <section class="hero">
     <div class="container py-3">
       <div class="row align-items-end g-3">
         <!-- Controles -->
         <div class="col-lg-6">
           <div class="panel p-3 controls">
-            <label for="selMunicipio" class="form-label mb-2 text-dark">Municipio (código API)</label>
             <div class="row g-2">
               <div class="col-12 col-sm-8">
+                <label for="selMunicipio" class="form-label mb-1 text-dark">Municipio (código API)</label>
                 <select id="selMunicipio" class="form-select">
                   <option value="201">201 — Guastatoya</option>
                   <option value="202">202 — Morazán</option>
@@ -43,12 +43,24 @@
                 </select>
               </div>
               <div class="col-6 col-sm-4 d-grid">
+                <label class="form-label mb-1 invisible">.</label>
                 <button id="btnCargar" class="btn btn-primary">
                   <i class="bi bi-arrow-repeat me-1"></i> Cargar datos
                 </button>
               </div>
-              <div class="col-6 col-sm-12 d-grid d-sm-block">
-                <a id="apiLink" class="btn btn-outline-dark w-100 mt-2 mt-sm-0" target="_blank" rel="noreferrer">Abrir URL API</a>
+
+              <!-- Enlace de API visible como input readonly -->
+              <div class="col-12">
+                <input id="apiText" class="form-control form-control-sm" readonly value="API: indicadores/2/201" />
+              </div>
+
+              <!-- Autor (fijo) -->
+              <div class="col-12 col-md-8">
+                <label class="form-label mb-1 text-dark">Milton Joetd Gómez Marroquín - 1890-22-10379</label>
+              </div>
+              <div class="col-6 col-md-4 d-grid">
+                <label class="form-label mb-1 invisible">.</label>
+                <a id="apiLink" class="btn btn-outline-dark" target="_blank" rel="noreferrer">Abrir URL API</a>
               </div>
             </div>
             <div id="status" class="mt-2"></div>
@@ -90,6 +102,58 @@
 
   <!-- CONTENIDO -->
   <main class="container my-4">
+
+    <!-- === NUEVO: Indicadores generales === -->
+    <section class="panel mb-4">
+      <div class="section-title">Indicadores generales</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:40%">Indicador</th>
+              <th class="num" style="width:20%">Valor</th>
+              <th style="width:40%">Visual</th>
+            </tr>
+          </thead>
+          <tbody id="tbGenerales"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- === NUEVO: Educación === -->
+    <section class="panel mb-4">
+      <div class="section-title">Educación</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:40%">Indicador</th>
+              <th class="num" style="width:20%">Valor</th>
+              <th style="width:40%">Visual</th>
+            </tr>
+          </thead>
+          <tbody id="tbEducacion"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- === NUEVO: Vivienda y hogares === -->
+    <section class="panel mb-4">
+      <div class="section-title">Vivienda y hogares</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:40%">Indicador</th>
+              <th class="num" style="width:20%">Valor</th>
+              <th style="width:40%">Visual</th>
+            </tr>
+          </thead>
+          <tbody id="tbHogares"></tbody>
+        </table>
+      </div>
+    </section>
+
     <!-- Sexo -->
     <section class="panel mb-4">
       <div class="section-title">Población por sexo</div>
@@ -102,7 +166,7 @@
               <th style="width:50%">Porcentaje</th>
             </tr>
           </thead>
-            <tbody id="tbodySexo"></tbody>
+          <tbody id="tbodySexo"></tbody>
         </table>
       </div>
     </section>
@@ -142,7 +206,7 @@
     </section>
 
     <!-- Pueblos -->
-    <section class="panel mb-5">
+    <section class="panel mb-4">
       <div class="section-title">Población por pueblos</div>
       <div class="table-responsive p-3 pt-2">
         <table class="table table-sm align-middle mb-0">
@@ -157,33 +221,118 @@
         </table>
       </div>
     </section>
+
+    <!-- Comparativa 201–208 (Totales) -->
+    <section class="panel mb-4">
+      <div class="section-title d-flex align-items-center justify-content-between">
+        <span>Comparativa de municipios (Totales)</span>
+        <div class="d-flex gap-2">
+          <button id="btnComparar" class="btn btn-sm btn-primary"><i class="bi bi-diagram-3 me-1"></i> Cargar</button>
+          <button id="btnCSVComp" class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-download me-1"></i> CSV</button>
+        </div>
+      </div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Municipio</th>
+              <th class="num">Total</th>
+              <th class="num">Hombres</th>
+              <th class="num">Mujeres</th>
+              <th class="num">Urbana</th>
+              <th class="num">Rural</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyComparativa">
+            <tr class="text-muted"><td colspan="6">Pulsa “Cargar” para ver todos los municipios…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- NUEVO: Comparativa Indicadores Clave -->
+    <section class="panel mb-5">
+      <div class="section-title d-flex align-items-center justify-content-between">
+        <span>Comparativa de indicadores clave</span>
+        <div class="d-flex gap-2">
+          <button id="btnCompKey" class="btn btn-sm btn-primary"><i class="bi bi-diagram-3 me-1"></i> Cargar</button>
+          <button id="btnCSVKey" class="btn btn-sm btn-outline-primary" disabled><i class="bi bi-download me-1"></i> CSV</button>
+        </div>
+      </div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Municipio</th>
+              <th class="num">Alfabetismo (%)</th>
+              <th class="num">Años estudio</th>
+              <th class="num">Edad prom.</th>
+              <th class="num">Hijos/mujer</th>
+              <th class="num">Índice dependencia</th>
+              <th class="num">Viviendas</th>
+              <th class="num">Hogares</th>
+              <th class="num">% Jefas</th>
+              <th class="num">Pers./hogar</th>
+            </tr>
+          </thead>
+          <tbody id="tbCompKey">
+            <tr class="text-muted"><td colspan="10">Pulsa “Cargar” para ver…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
-  <!-- FOOTER fijo -->
+  <!-- FOOTER fijo (negro) -->
   <footer class="sticky-footer">
-    Diseñado por: Milton Joetd Gómez Marroquín — 1890-22-10379
+    Diseñado por: <span>Milton Joetd Gómez Marroquín - 1890-22-10379</span>
   </footer>
 
   <!-- JS -->
   <script>
     const API_BASE = 'https://censopoblacion.azurewebsites.net/API/indicadores/2/';
+    const MUNICIPIOS = [
+      { code: 201, name: 'Guastatoya' },
+      { code: 202, name: 'Morazán' },
+      { code: 203, name: 'San Agustín Acasaguastlán' },
+      { code: 204, name: 'San Cristóbal Acasaguastlán' },
+      { code: 205, name: 'El Jícaro' },
+      { code: 206, name: 'Sansare' },
+      { code: 207, name: 'Sanarate' },
+      { code: 208, name: 'San Antonio La Paz' }
+    ];
 
-    // DOM
+    // DOM principales
     const selMunicipio = document.getElementById('selMunicipio');
     const btnCargar    = document.getElementById('btnCargar');
     const apiLink      = document.getElementById('apiLink');
+    const apiText      = document.getElementById('apiText');
     const statusBox    = document.getElementById('status');
 
-    const muniNombre = document.getElementById('muniNombre');
-    const pobTotalEl = document.getElementById('pobTotal');
+    const muniNombre   = document.getElementById('muniNombre');
+    const pobTotalEl   = document.getElementById('pobTotal');
     const masculinidadEl = document.getElementById('masculinidad');
+
+    const tbGenerales = document.getElementById('tbGenerales');
+    const tbEducacion = document.getElementById('tbEducacion');
+    const tbHogares   = document.getElementById('tbHogares');
 
     const tbSexo = document.getElementById('tbodySexo');
     const tbArea = document.getElementById('tbodyArea');
     const tbEdad = document.getElementById('tbodyEdad');
     const tbPue  = document.getElementById('tbodyPueblos');
 
-    // Helpers robustos
+    // Comparativas
+    const btnComparar   = document.getElementById('btnComparar');
+    const btnCSVComp    = document.getElementById('btnCSVComp');
+    const tbComparativa = document.getElementById('tbodyComparativa');
+
+    const btnCompKey = document.getElementById('btnCompKey');
+    const btnCSVKey  = document.getElementById('btnCSVKey');
+    const tbCompKey  = document.getElementById('tbCompKey');
+
+    // ===== Helpers =====
     const num = (v) => {
       if (typeof v === 'number') return v;
       if (v === 0 || v === '0') return 0;
@@ -192,23 +341,25 @@
       return Number.isFinite(n) ? n : NaN;
     };
     const fmt = n => Number.isFinite(n) ? n.toLocaleString('es-GT') : '—';
+    const fmt2 = n => Number.isFinite(n) ? n.toFixed(2) : '—';
     const coalesceNum = (...vals) => { for (const v of vals){ const n=num(v); if(Number.isFinite(n)) return n;} return NaN; };
     const pctVal = (part, total) => {
       const p=num(part), t=num(total);
       if (!Number.isFinite(p) || !Number.isFinite(t) || t<=0) return null;
-      return Math.round((p/t)*10000)/100; // 2 decimales
+      return Math.round((p/t)*10000)/100;
     };
     const notify = (msg, type='info') => {
       statusBox.innerHTML = `<div class="alert alert-${type} py-2 my-0">${msg}</div>`;
       setTimeout(()=>statusBox.innerHTML='', 3000);
     };
-    const updateApiLink = (code) => {
+    const updateApi = (code) => {
       const url = API_BASE + code;
       apiLink.href = url;
-      apiLink.textContent = `API: indicadores/2/${code}`;
+      apiLink.textContent = 'Abrir URL API';
+      apiText.value = `API: indicadores/2/${code}`;
     };
 
-    // Ajuste de padding para header/footer fijos
+    // Layout con header/footer fijos
     function adjustLayoutHeights(){
       const nav = document.querySelector('header.app-navbar');
       const foot = document.querySelector('footer.sticky-footer');
@@ -218,15 +369,25 @@
     window.addEventListener('load', adjustLayoutHeights);
     window.addEventListener('resize', adjustLayoutHeights);
 
-    // Fetch con posible doble parse
+    // Caché
+    const cacheKey = 'censo_cache_v1';
+    function getCache() { try { return JSON.parse(localStorage.getItem(cacheKey) || '{}'); } catch { return {}; } }
+    function setCache(url, data) { const c = getCache(); c[url] = data; localStorage.setItem(cacheKey, JSON.stringify(c)); }
+
+    // Fetch (con doble parse posible)
     async function fetchMunicipio(code){
-      const res = await fetch(API_BASE + code, { headers:{ 'Accept':'application/json'} });
+      const url = API_BASE + code;
+      const cache = getCache();
+      if (cache[url]) return cache[url];
+      const res = await fetch(url, { headers:{ 'Accept':'application/json'} });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const payload = await res.json();
-      return (typeof payload === 'string') ? JSON.parse(payload) : payload;
+      const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
+      setCache(url, data);
+      return data;
     }
 
-    // Celdas con barra de progreso
+    // Celda con barra
     function progressCell(percentNumber){
       const pct = percentNumber==null ? null : Math.max(0, Math.min(100, Number(percentNumber)));
       const label = pct==null ? '—' : pct.toFixed(2) + '%';
@@ -242,8 +403,17 @@
         </div>`;
     }
 
+    // Fila simple (sin barra)
+    function rowSimple(label, value, suffix=''){
+      return `<tr><td>${label}</td><td class="num">${value}${suffix}</td><td></td></tr>`;
+    }
+    // Fila con barra (%)
+    function rowWithBar(label, value, percent){
+      return `<tr><td>${label}</td><td class="num">${value}</td><td>${progressCell(percent)}</td></tr>`;
+    }
+
+    // Render principal
     function render(d){
-      // Valores base
       const h = num(d.total_sexo_hombre);
       const m = num(d.total_sexo_mujeres);
       const u = num(d.total_sector_urbano);
@@ -267,7 +437,32 @@
       pobTotalEl.textContent = fmt(total);
       masculinidadEl.textContent = Number.isFinite(masculinidad) ? masculinidad.toFixed(2) : '—';
 
-      // SEXO
+      // === Indicadores generales ===
+      tbGenerales.innerHTML = [
+        rowSimple('Extensión territorial (km²)', fmt(num(d.ext_territorial))),
+        rowSimple('Índice de masculinidad (H/M * 100)', fmt2(num(d.indice_masculinidad))),
+        rowSimple('Promedio de hijos por mujer', fmt2(num(d.prom_hijos_mujer))),
+        rowSimple('Edad promedio (años)', fmt2(num(d.edad_promedio))),
+        rowSimple('Índice de dependencia', fmt2(num(d.indice_dependencia)))
+      ].join('');
+
+      // === Educación ===
+      const alfabetismo = num(d.alfabetismo);
+      tbEducacion.innerHTML = [
+        rowSimple('Años promedio de estudio', fmt2(num(d.anios_prom_estudio))),
+        rowWithBar('Alfabetismo', alfabetismo!=null ? fmt2(alfabetismo)+'%' : '—', alfabetismo)
+      ].join('');
+
+      // === Vivienda y hogares ===
+      const jefas = num(d.total_jefas_hogar);
+      tbHogares.innerHTML = [
+        rowSimple('Viviendas particulares', fmt(num(d.viviendas_part))),
+        rowSimple('Total de hogares', fmt(num(d.total_hogares))),
+        rowSimple('Promedio de personas por hogar', fmt2(num(d.prom_personas_hogar))),
+        rowWithBar('Hogares con jefatura femenina', jefas!=null ? fmt2(jefas)+'%' : '—', jefas)
+      ].join('');
+
+      // === Sexo ===
       const ph = Number.isFinite(num(d.porc_sexo_hombre)) ? num(d.porc_sexo_hombre) : pctVal(h,total);
       const pm = Number.isFinite(num(d.porc_sexo_mujeres)) ? num(d.porc_sexo_mujeres) : pctVal(m,total);
       tbSexo.innerHTML = `
@@ -275,7 +470,7 @@
         <tr><td>Mujeres</td><td class="num">${fmt(m)}</td><td>${progressCell(pm)}</td></tr>
       `;
 
-      // ÁREA
+      // === Área ===
       const pu = Number.isFinite(num(d.porc_sector_urbano)) ? num(d.porc_sector_urbano) : pctVal(u,total);
       const pr = Number.isFinite(num(d.porc_sector_rural))  ? num(d.porc_sector_rural)  : pctVal(r,total);
       tbArea.innerHTML = `
@@ -283,7 +478,7 @@
         <tr><td>Rural</td><td class="num">${fmt(r)}</td><td>${progressCell(pr)}</td></tr>
       `;
 
-      // EDAD
+      // === Edad ===
       const e014=num(d.pob_edad_014), e1564=num(d.pob_edad_1564), e65=num(d.pob_edad_65);
       const pe014=Number.isFinite(num(d.porc_edad_014)) ? num(d.porc_edad_014) : pctVal(e014,total);
       const pe1564=Number.isFinite(num(d.porc_edad_1564))? num(d.porc_edad_1564): pctVal(e1564,total);
@@ -294,7 +489,7 @@
         <tr><td>65 y más años</td><td class="num">${fmt(e65)}</td><td>${progressCell(pe65)}</td></tr>
       `;
 
-      // PUEBLOS
+      // === Pueblos ===
       const maya=num(d.pob_pueblo_maya), gar=num(d.pob_pueblo_garifuna),
             xin=num(d.pob_pueblo_xinca), afr=num(d.pob_pueblo_afrodescendiente),
             lad=num(d.pob_pueblo_ladino), ext=num(d.pob_pueblo_extranjero);
@@ -304,7 +499,7 @@
       const pafr =Number.isFinite(num(d.porc_pueblo_afrodescendiente)) ? num(d.porc_pueblo_afrodescendiente) : pctVal(afr,total);
       const plad =Number.isFinite(num(d.porc_pueblo_ladino)) ? num(d.porc_pueblo_ladino) : pctVal(lad,total);
       const pext =Number.isFinite(num(d.porc_pueblo_extranjero)) ? num(d.porc_pueblo_extranjero) : pctVal(ext,total);
-      tbPueblos.innerHTML = `
+      tbPue.innerHTML = `
         <tr><td>Maya</td><td class="num">${fmt(maya)}</td><td>${progressCell(pmaya)}</td></tr>
         <tr><td>Garífuna</td><td class="num">${fmt(gar)}</td><td>${progressCell(pgar)}</td></tr>
         <tr><td>Xinca</td><td class="num">${fmt(xin)}</td><td>${progressCell(pxin)}</td></tr>
@@ -314,24 +509,149 @@
       `;
     }
 
-    async function loadMunicipio(code){
+    // === Comparativa Totales (ya la tenías) ===
+    async function loadComparativa(){
+      btnComparar.disabled = true;
+      btnCSVComp.disabled = true;
+      tbComparativa.innerHTML = `<tr class="text-muted"><td colspan="6">Cargando…</td></tr>`;
       try{
-        notify(`Consultando API para código ${code}…`);
-        updateApiLink(code);
-        const data = await fetchMunicipio(code);
-        render(data);
-        notify('Datos cargados ✅', 'success');
+        const codes = MUNICIPIOS.map(m => m.code);
+        const results = await Promise.all(codes.map(code => fetchMunicipio(code).then(d => ({ code, data:d }))));
+
+        tbComparativa.innerHTML = results.map(({code, data}) => {
+          const h = num(data.total_sexo_hombre), m = num(data.total_sexo_mujeres);
+          const u = num(data.total_sector_urbano), r = num(data.total_sector_rural);
+          const total = coalesceNum(data.pob_total, (Number.isFinite(h)&&Number.isFinite(m))?h+m:NaN, (Number.isFinite(u)&&Number.isFinite(r))?u+r:NaN);
+          const muniName = MUNICIPIOS.find(x => x.code===code)?.name || data?.nombre || code;
+          return `<tr>
+            <td>${muniName} <span class="text-muted small">(${code})</span></td>
+            <td class="num">${fmt(total)}</td>
+            <td class="num">${fmt(h)}</td>
+            <td class="num">${fmt(m)}</td>
+            <td class="num">${fmt(u)}</td>
+            <td class="num">${fmt(r)}</td>
+          </tr>`;
+        }).join('');
+
+        // CSV
+        btnCSVComp.disabled = false;
+        window.__lastCompare = results.map(({code, data}) => {
+          const h = num(data.total_sexo_hombre), m = num(data.total_sexo_mujeres);
+          const u = num(data.total_sector_urbano), r = num(data.total_sector_rural);
+          const total = coalesceNum(data.pob_total, (Number.isFinite(h)&&Number.isFinite(m))?h+m:NaN, (Number.isFinite(u)&&Number.isFinite(r))?u+r:NaN);
+          const name = MUNICIPIOS.find(x => x.code===code)?.name || data?.nombre || code;
+          return { codigo: code, municipio: name, total, hombres: h, mujeres: m, urbano: u, rural: r };
+        });
       }catch(e){
         console.error(e);
-        notify('No se pudo leer la API. Usa Live Server o publica en GitHub Pages (CORS).', 'danger');
+        tbComparativa.innerHTML = `<tr class="text-danger"><td colspan="6">No se pudo cargar la comparativa.</td></tr>`;
+      }finally{
+        btnComparar.disabled = false;
       }
     }
 
-    // Eventos + arranque
-    btnCargar.addEventListener('click', ()=> loadMunicipio(Number(selMunicipio.value)));
-    selMunicipio.addEventListener('change', ()=> updateApiLink(Number(selMunicipio.value)));
-    updateApiLink(Number(selMunicipio.value));
-    loadMunicipio(Number(selMunicipio.value));
+    function toCSV(rows){
+      if (!rows || !rows.length) return '';
+      const headers = Object.keys(rows[0]);
+      const lines = [headers.join(',')].concat(
+        rows.map(r => headers.map(h => (r[h] ?? '')).join(','))
+      );
+      return lines.join('\n');
+    }
+    function downloadCSV(filename, rows){
+      const csv = toCSV(rows);
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // CSV Totales
+    document.getElementById('btnCSVComp').addEventListener('click', ()=> {
+      if (window.__lastCompare?.length) downloadCSV('comparativa_el_progreso.csv', window.__lastCompare);
+    });
+
+    // === NUEVO: Comparativa de indicadores clave ===
+    let compKeyCache = null;
+
+    async function loadCompKey(){
+      btnCompKey.disabled = true;
+      btnCSVKey.disabled = true;
+      tbCompKey.innerHTML = `<tr class="text-muted"><td colspan="10">Cargando…</td></tr>`;
+      try{
+        const codes = MUNICIPIOS.map(m => m.code);
+        const results = await Promise.all(codes.map(code => fetchMunicipio(code).then(d => ({ code, data:d }))));
+
+        compKeyCache = results.map(({code, data}) => {
+          const name = MUNICIPIOS.find(x => x.code===code)?.name || data?.nombre || code;
+          return {
+            codigo: code,
+            municipio: name,
+            alfabetismo: num(data.alfabetismo),
+            anios_prom_estudio: num(data.anios_prom_estudio),
+            edad_promedio: num(data.edad_promedio),
+            prom_hijos_mujer: num(data.prom_hijos_mujer),
+            indice_dependencia: num(data.indice_dependencia),
+            viviendas_part: num(data.viviendas_part),
+            total_hogares: num(data.total_hogares),
+            total_jefas_hogar: num(data.total_jefas_hogar),
+            prom_personas_hogar: num(data.prom_personas_hogar)
+          };
+        });
+
+        tbCompKey.innerHTML = compKeyCache.map(r => `
+          <tr>
+            <td>${r.municipio} <span class="text-muted small">(${r.codigo})</span></td>
+            <td class="num">${r.alfabetismo!=null ? r.alfabetismo.toFixed(2) : '—'}</td>
+            <td class="num">${fmt2(r.anios_prom_estudio)}</td>
+            <td class="num">${fmt2(r.edad_promedio)}</td>
+            <td class="num">${fmt2(r.prom_hijos_mujer)}</td>
+            <td class="num">${fmt2(r.indice_dependencia)}</td>
+            <td class="num">${fmt(r.viviendas_part)}</td>
+            <td class="num">${fmt(r.total_hogares)}</td>
+            <td class="num">${r.total_jefas_hogar!=null ? r.total_jefas_hogar.toFixed(2) : '—'}</td>
+            <td class="num">${fmt2(r.prom_personas_hogar)}</td>
+          </tr>
+        `).join('');
+
+        btnCSVKey.disabled = false;
+      }catch(e){
+        console.error(e);
+        tbCompKey.innerHTML = `<tr class="text-danger"><td colspan="10">No se pudo cargar la comparativa.</td></tr>`;
+      }finally{
+        btnCompKey.disabled = false;
+      }
+    }
+
+    function csvCompKey(){
+      if (!compKeyCache?.length) return;
+      downloadCSV('comparativa_indicadores_clave.csv', compKeyCache);
+    }
+
+    // Eventos
+    btnCargar.addEventListener('click', async ()=>{
+      const code = Number(selMunicipio.value);
+      notify(`Consultando API para código ${code}…`);
+      updateApi(code);
+      try{
+        const data = await fetchMunicipio(code);
+        render(data);
+        notify('Datos cargados ✅','success');
+      }catch(e){
+        console.error(e);
+        notify('No se pudo leer la API. Usa Live Server o GitHub Pages (CORS).','danger');
+      }
+    });
+    selMunicipio.addEventListener('change', ()=> updateApi(Number(selMunicipio.value)));
+
+    btnComparar.addEventListener('click', loadComparativa);
+    btnCompKey.addEventListener('click', loadCompKey);
+    btnCSVKey.addEventListener('click', csvCompKey);
+
+    // Inicial
+    updateApi(Number(selMunicipio.value));
+    btnCargar.click();
   </script>
 </body>
 </html>

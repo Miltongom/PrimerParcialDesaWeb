@@ -2,7 +2,7 @@
   --nav-h: 64px;
   --footer-h: 52px;
 
-  /* Paleta accesible y limpia */
+  /* Paleta */
   --nav-bg: #111827;        /* header gris carbón */
   --hero-from: #eef2ff;     /* hero claro con degradado */
   --hero-to:   #fafafa;
@@ -37,7 +37,7 @@ body{
   border-top:1px solid rgba(0,0,0,.08);
 }
 
-/* Hero claro con degradado sutil (no azul sólido) */
+/* Hero claro con degradado */
 .hero{
   background: radial-gradient(1000px 300px at 15% -10%, rgba(14,165,233,.15), transparent),
               linear-gradient(180deg, var(--hero-from), var(--hero-to));
@@ -52,7 +52,7 @@ body{
   box-shadow:0 6px 24px rgba(0,0,0,.04);
 }
 
-/* Títulos de sección con acento sutil */
+/* Títulos de sección con acento */
 .section-title{
   border-top-left-radius:14px; border-top-right-radius:14px;
   padding:.6rem .9rem; font-weight:600;
@@ -88,9 +88,23 @@ body{
 }
 .kpi .kpi-value{ font-size:1.25rem; font-weight:700; color:#0f172a; }
 
-/* Progress bars bonitas */
+/* Progress bars */
 .progress{ height:.6rem; background:#edf2f7; }
 .progress .progress-bar{ background: linear-gradient(90deg, var(--accent), var(--primary)); }
 
 /* Botones superiores */
 .controls .btn, .controls a{ min-height:40px; }
+
+/* Input API readonly, estilo suave */
+#apiText{
+  font-size:.9rem; color:#6b7280; background:#f8fafc;
+}
+
+/* Footer negro */
+footer.sticky-footer {
+  background-color: #000;   /* negro */
+  color: #fff;              /* texto blanco */
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.9rem;
+}
