@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Censo 2018 — El Progreso</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+  <!-- Tus estilos separados -->
+  <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+  <!-- HEADER fijo -->
+  <header class="navbar navbar-dark app-navbar">
+    <div class="container">
+      <span class="navbar-brand fw-bold">Censo 2018 — El Progreso</span>
+      <span class="navbar-text text-white-50 small">HTML5 + Bootstrap + JS (fetch)</span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container py-3">
+      <div class="row align-items-end g-3">
+        <!-- Controles -->
+        <div class="col-lg-6">
+          <div class="panel p-3 controls">
+            <label for="selMunicipio" class="form-label mb-2 text-dark">Municipio (código API)</label>
+            <div class="row g-2">
+              <div class="col-12 col-sm-8">
+                <select id="selMunicipio" class="form-select">
+                  <option value="201">201 — Guastatoya</option>
+                  <option value="202">202 — Morazán</option>
+                  <option value="203">203 — San Agustín Acasaguastlán</option>
+                  <option value="204">204 — San Cristóbal Acasaguastlán</option>
+                  <option value="205">205 — El Jícaro</option>
+                  <option value="206">206 — Sansare</option>
+                  <option value="207">207 — Sanarate</option>
+                  <option value="208">208 — San Antonio La Paz</option>
+                </select>
+              </div>
+              <div class="col-6 col-sm-4 d-grid">
+                <button id="btnCargar" class="btn btn-primary">
+                  <i class="bi bi-arrow-repeat me-1"></i> Cargar datos
+                </button>
+              </div>
+              <div class="col-6 col-sm-12 d-grid d-sm-block">
+                <a id="apiLink" class="btn btn-outline-dark w-100 mt-2 mt-sm-0" target="_blank" rel="noreferrer">Abrir URL API</a>
+              </div>
+            </div>
+            <div id="status" class="mt-2"></div>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="col-lg-6">
+          <div class="panel p-3">
+            <div class="row g-3">
+              <div class="col-12 d-flex align-items-center gap-2">
+                <h5 class="mb-0">Municipio:</h5>
+                <span id="muniNombre" class="badge badge-soft">—</span>
+              </div>
+              <div class="col-sm-6">
+                <div class="kpi">
+                  <div class="icon"><i class="bi bi-people-fill"></i></div>
+                  <div>
+                    <div class="text-muted small">Población total</div>
+                    <div id="pobTotal" class="kpi-value">—</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="kpi">
+                  <div class="icon"><i class="bi bi-bar-chart-line-fill"></i></div>
+                  <div>
+                    <div class="text-muted small">Índice de masculinidad</div>
+                    <div id="masculinidad" class="kpi-value">—</div>
+                  </div>
+                </div>
+              </div>
+            </div><!-- row -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO -->
+  <main class="container my-4">
+    <!-- Sexo -->
+    <section class="panel mb-4">
+      <div class="section-title">Población por sexo</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:30%">Sexo</th>
+              <th class="num" style="width:20%">Cantidad</th>
+              <th style="width:50%">Porcentaje</th>
+            </tr>
+          </thead>
+            <tbody id="tbodySexo"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Área -->
+    <section class="panel mb-4">
+      <div class="section-title">Población por área</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:30%">Área</th>
+              <th class="num" style="width:20%">Cantidad</th>
+              <th style="width:50%">Porcentaje</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyArea"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Edad -->
+    <section class="panel mb-4">
+      <div class="section-title">Población por grandes grupos de edad</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:30%">Grupo</th>
+              <th class="num" style="width:20%">Cantidad</th>
+              <th style="width:50%">Porcentaje</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyEdad"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Pueblos -->
+    <section class="panel mb-5">
+      <div class="section-title">Población por pueblos</div>
+      <div class="table-responsive p-3 pt-2">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="width:30%">Pueblo</th>
+              <th class="num" style="width:20%">Cantidad</th>
+              <th style="width:50%">Porcentaje</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPueblos"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER fijo -->
+  <footer class="sticky-footer">
+    Diseñado por: Milton Joetd Gómez Marroquín — 1890-22-10379
+  </footer>
+
+  <!-- JS -->
+  <script>
+    const API_BASE = 'https://censopoblacion.azurewebsites.net/API/indicadores/2/';
+
+    // DOM
+    const selMunicipio = document.getElementById('selMunicipio');
+    const btnCargar    = document.getElementById('btnCargar');
+    const apiLink      = document.getElementById('apiLink');
+    const statusBox    = document.getElementById('status');
+
+    const muniNombre = document.getElementById('muniNombre');
+    const pobTotalEl = document.getElementById('pobTotal');
+    const masculinidadEl = document.getElementById('masculinidad');
+
+    const tbSexo = document.getElementById('tbodySexo');
+    const tbArea = document.getElementById('tbodyArea');
+    const tbEdad = document.getElementById('tbodyEdad');
+    const tbPue  = document.getElementById('tbodyPueblos');
+
+    // Helpers robustos
+    const num = (v) => {
+      if (typeof v === 'number') return v;
+      if (v === 0 || v === '0') return 0;
+      if (v == null || v === '') return NaN;
+      const n = Number(String(v).replace(/,/g,''));
+      return Number.isFinite(n) ? n : NaN;
+    };
+    const fmt = n => Number.isFinite(n) ? n.toLocaleString('es-GT') : '—';
+    const coalesceNum = (...vals) => { for (const v of vals){ const n=num(v); if(Number.isFinite(n)) return n;} return NaN; };
+    const pctVal = (part, total) => {
+      const p=num(part), t=num(total);
+      if (!Number.isFinite(p) || !Number.isFinite(t) || t<=0) return null;
+      return Math.round((p/t)*10000)/100; // 2 decimales
+    };
+    const notify = (msg, type='info') => {
+      statusBox.innerHTML = `<div class="alert alert-${type} py-2 my-0">${msg}</div>`;
+      setTimeout(()=>statusBox.innerHTML='', 3000);
+    };
+    const updateApiLink = (code) => {
+      const url = API_BASE + code;
+      apiLink.href = url;
+      apiLink.textContent = `API: indicadores/2/${code}`;
+    };
+
+    // Ajuste de padding para header/footer fijos
+    function adjustLayoutHeights(){
+      const nav = document.querySelector('header.app-navbar');
+      const foot = document.querySelector('footer.sticky-footer');
+      document.documentElement.style.setProperty('--nav-h', nav.getBoundingClientRect().height + 'px');
+      document.documentElement.style.setProperty('--footer-h', foot.getBoundingClientRect().height + 'px');
+    }
+    window.addEventListener('load', adjustLayoutHeights);
+    window.addEventListener('resize', adjustLayoutHeights);
+
+    // Fetch con posible doble parse
+    async function fetchMunicipio(code){
+      const res = await fetch(API_BASE + code, { headers:{ 'Accept':'application/json'} });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const payload = await res.json();
+      return (typeof payload === 'string') ? JSON.parse(payload) : payload;
+    }
+
+    // Celdas con barra de progreso
+    function progressCell(percentNumber){
+      const pct = percentNumber==null ? null : Math.max(0, Math.min(100, Number(percentNumber)));
+      const label = pct==null ? '—' : pct.toFixed(2) + '%';
+      const width = pct==null ? 0 : pct;
+      return `
+        <div class="d-flex align-items-center gap-3">
+          <div class="flex-grow-1">
+            <div class="progress" role="progressbar" aria-valuenow="${width}" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width:${width}%"></div>
+            </div>
+          </div>
+          <div class="num pct-label">${label}</div>
+        </div>`;
+    }
+
+    function render(d){
+      // Valores base
+      const h = num(d.total_sexo_hombre);
+      const m = num(d.total_sexo_mujeres);
+      const u = num(d.total_sector_urbano);
+      const r = num(d.total_sector_rural);
+
+      // Total robusto
+      const total = coalesceNum(
+        d.pob_total,
+        (Number.isFinite(h) && Number.isFinite(m)) ? h + m : NaN,
+        (Number.isFinite(u) && Number.isFinite(r)) ? u + r : NaN
+      );
+
+      // Índice de masculinidad robusto
+      let masculinidad = num(d.indice_masculinidad);
+      if (!Number.isFinite(masculinidad) && Number.isFinite(h) && Number.isFinite(m) && m>0) {
+        masculinidad = (h/m)*100;
+      }
+
+      // KPIs
+      muniNombre.textContent = d?.nombre || `Código ${d?.municipio_id ?? ''}`;
+      pobTotalEl.textContent = fmt(total);
+      masculinidadEl.textContent = Number.isFinite(masculinidad) ? masculinidad.toFixed(2) : '—';
+
+      // SEXO
+      const ph = Number.isFinite(num(d.porc_sexo_hombre)) ? num(d.porc_sexo_hombre) : pctVal(h,total);
+      const pm = Number.isFinite(num(d.porc_sexo_mujeres)) ? num(d.porc_sexo_mujeres) : pctVal(m,total);
+      tbSexo.innerHTML = `
+        <tr><td>Hombres</td><td class="num">${fmt(h)}</td><td>${progressCell(ph)}</td></tr>
+        <tr><td>Mujeres</td><td class="num">${fmt(m)}</td><td>${progressCell(pm)}</td></tr>
+      `;
+
+      // ÁREA
+      const pu = Number.isFinite(num(d.porc_sector_urbano)) ? num(d.porc_sector_urbano) : pctVal(u,total);
+      const pr = Number.isFinite(num(d.porc_sector_rural))  ? num(d.porc_sector_rural)  : pctVal(r,total);
+      tbArea.innerHTML = `
+        <tr><td>Urbana</td><td class="num">${fmt(u)}</td><td>${progressCell(pu)}</td></tr>
+        <tr><td>Rural</td><td class="num">${fmt(r)}</td><td>${progressCell(pr)}</td></tr>
+      `;
+
+      // EDAD
+      const e014=num(d.pob_edad_014), e1564=num(d.pob_edad_1564), e65=num(d.pob_edad_65);
+      const pe014=Number.isFinite(num(d.porc_edad_014)) ? num(d.porc_edad_014) : pctVal(e014,total);
+      const pe1564=Number.isFinite(num(d.porc_edad_1564))? num(d.porc_edad_1564): pctVal(e1564,total);
+      const pe65=Number.isFinite(num(d.porc_edad_65))? num(d.porc_edad_65): pctVal(e65,total);
+      tbEdad.innerHTML = `
+        <tr><td>0–14 años</td><td class="num">${fmt(e014)}</td><td>${progressCell(pe014)}</td></tr>
+        <tr><td>15–64 años</td><td class="num">${fmt(e1564)}</td><td>${progressCell(pe1564)}</td></tr>
+        <tr><td>65 y más años</td><td class="num">${fmt(e65)}</td><td>${progressCell(pe65)}</td></tr>
+      `;
+
+      // PUEBLOS
+      const maya=num(d.pob_pueblo_maya), gar=num(d.pob_pueblo_garifuna),
+            xin=num(d.pob_pueblo_xinca), afr=num(d.pob_pueblo_afrodescendiente),
+            lad=num(d.pob_pueblo_ladino), ext=num(d.pob_pueblo_extranjero);
+      const pmaya=Number.isFinite(num(d.porc_pueblo_maya)) ? num(d.porc_pueblo_maya) : pctVal(maya,total);
+      const pgar =Number.isFinite(num(d.porc_pueblo_garifuna)) ? num(d.porc_pueblo_garifuna) : pctVal(gar,total);
+      const pxin =Number.isFinite(num(d.porc_pueblo_xinca)) ? num(d.porc_pueblo_xinca) : pctVal(xin,total);
+      const pafr =Number.isFinite(num(d.porc_pueblo_afrodescendiente)) ? num(d.porc_pueblo_afrodescendiente) : pctVal(afr,total);
+      const plad =Number.isFinite(num(d.porc_pueblo_ladino)) ? num(d.porc_pueblo_ladino) : pctVal(lad,total);
+      const pext =Number.isFinite(num(d.porc_pueblo_extranjero)) ? num(d.porc_pueblo_extranjero) : pctVal(ext,total);
+      tbPueblos.innerHTML = `
+        <tr><td>Maya</td><td class="num">${fmt(maya)}</td><td>${progressCell(pmaya)}</td></tr>
+        <tr><td>Garífuna</td><td class="num">${fmt(gar)}</td><td>${progressCell(pgar)}</td></tr>
+        <tr><td>Xinca</td><td class="num">${fmt(xin)}</td><td>${progressCell(pxin)}</td></tr>
+        <tr><td>Afrodescendiente/Criollo/Afromestizo</td><td class="num">${fmt(afr)}</td><td>${progressCell(pafr)}</td></tr>
+        <tr><td>Ladino</td><td class="num">${fmt(lad)}</td><td>${progressCell(plad)}</td></tr>
+        <tr><td>Extranjero</td><td class="num">${fmt(ext)}</td><td>${progressCell(pext)}</td></tr>
+      `;
+    }
+
+    async function loadMunicipio(code){
+      try{
+        notify(`Consultando API para código ${code}…`);
+        updateApiLink(code);
+        const data = await fetchMunicipio(code);
+        render(data);
+        notify('Datos cargados ✅', 'success');
+      }catch(e){
+        console.error(e);
+        notify('No se pudo leer la API. Usa Live Server o publica en GitHub Pages (CORS).', 'danger');
+      }
+    }
+
+    // Eventos + arranque
+    btnCargar.addEventListener('click', ()=> loadMunicipio(Number(selMunicipio.value)));
+    selMunicipio.addEventListener('change', ()=> updateApiLink(Number(selMunicipio.value)));
+    updateApiLink(Number(selMunicipio.value));
+    loadMunicipio(Number(selMunicipio.value));
+  </script>
+</body>
+</html>
